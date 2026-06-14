@@ -1,0 +1,72 @@
+/* @curve-ramp/tokens — SEMANTIC layer (PLAN §3.3 layer 2).
+ *
+ * Roles only. Every value resolves to a --raw-* token defined in raw.css —
+ * never an oklch()/hex literal, never another semantic token (gates T1, T2).
+ * Light/dark theming happens HERE and only here (plus the R-22 data-theme color-scheme override pair in global.css's `global` layer — mechanism, not tokens), via `color-scheme` +
+ * light-dark() pairs over the raw ramps; raw.css stays mode-agnostic.
+ *
+ * Remember the reversed key convention: 050 = darkest, 950 = lightest. So a
+ * light-mode surface takes a HIGH stop and light-mode text a LOW stop.
+ *
+ * Contrast: every text/surface role pairing below is declared in ../pairs.json
+ * and enforced by gate T5 (scripts/check-tokens.mjs) in BOTH modes using the
+ * engine's own apcaLc. APCA-verified Lc at the time of authoring:
+ *
+ *   text / surface             +100.7 light · −97.5 dark   (body, min 75)
+ *   text / surface-raised       +96.4 light · −95.7 dark   (body, min 75)
+ *   text-muted / surface        +66.0 light · −67.4 dark   (muted, min 60)
+ *   accent-as-text / surface    +64.7 light · −68.2 dark   (large/muted, min 60)
+ */
+
+@layer tokens.semantic {
+  :root {
+    color-scheme: light dark;
+
+    /* ── Color roles ──────────────────────────────────────────────────── */
+    --color-surface: light-dark(var(--raw-neutral-950), var(--raw-neutral-050));
+    --color-surface-raised: light-dark(var(--raw-neutral-900), var(--raw-neutral-200));
+    --color-text: light-dark(var(--raw-neutral-100), var(--raw-neutral-900));
+    --color-text-muted: light-dark(var(--raw-neutral-500), var(--raw-neutral-700));
+    --color-accent: light-dark(var(--raw-accent-500), var(--raw-accent-700));
+    /* Focus ring — non-text indicator; a stronger accent stop in dark mode. */
+    --color-focus: light-dark(var(--raw-accent-500), var(--raw-accent-600));
+    /* Gamut-clamp flag (SPEC §10); non-text badge/dot color. Orange-red
+     * since the 2026-06-10 owner QA retune (hue-distinct from --curve-c in
+     * both modes — rationale at the raw definitions); raw names unchanged. */
+    --color-warning: light-dark(var(--raw-amber-400), var(--raw-amber-700));
+
+    /* ── Channel-curve strokes (SPEC §8.1: L = red, C = yellow, H = green).
+     * M7 council #7: the single dark-tuned stops washed out on the light
+     * surface — light mode takes darker / more-chromatic stops (APCA Lc per
+     * mode documented at the raw definitions). */
+    --curve-l: light-dark(var(--raw-curve-red-light), var(--raw-curve-red));
+    --curve-c: light-dark(var(--raw-curve-yellow-light), var(--raw-curve-yellow));
+    --curve-h: light-dark(var(--raw-curve-green-light), var(--raw-curve-green));
+
+    /* ── Scalar aliases ───────────────────────────────────────────────── */
+    --space-1: var(--raw-space-1);
+    --space-2: var(--raw-space-2);
+    --space-3: var(--raw-space-3);
+    --space-4: var(--raw-space-4);
+    --space-5: var(--raw-space-5);
+    --space-6: var(--raw-space-6);
+    --space-7: var(--raw-space-7);
+    --space-8: var(--raw-space-8);
+
+    --text-xs: var(--raw-text-xs);
+    --text-sm: var(--raw-text-sm);
+    --text-md: var(--raw-text-md);
+    --text-lg: var(--raw-text-lg);
+    --text-xl: var(--raw-text-xl);
+    --text-2xl: var(--raw-text-2xl);
+
+    --radius-1: var(--raw-radius-1);
+    --radius-2: var(--raw-radius-2);
+    --radius-3: var(--raw-radius-3);
+    --radius-4: var(--raw-radius-4);
+
+    --duration-1: var(--raw-duration-1);
+    --duration-2: var(--raw-duration-2);
+    --duration-3: var(--raw-duration-3);
+  }
+}

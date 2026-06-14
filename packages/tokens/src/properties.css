@@ -1,0 +1,54 @@
+/* @curve-ramp/tokens — @property registrations (PLAN §3.3 item 3).
+ *
+ * Typed registrations for the semantic color tokens that components will
+ * transition/animate (hover accents, theme flips, the amber clamp flag pulse).
+ * Registering `syntax: '<color>'` makes them interpolable as colors instead of
+ * discrete custom-property swaps.
+ *
+ * `initial-value: transparent` everywhere, deliberately: gate T1 forbids
+ * oklch() literals outside raw.css, and the initial value is never observed —
+ * the tokens.semantic layer always defines each token on :root. @property
+ * rules are not affected by cascade layers, so this file needs no @layer.
+ */
+
+@property --color-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-surface-raised {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-text-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-focus {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --color-warning {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}

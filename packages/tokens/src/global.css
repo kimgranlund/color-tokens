@@ -1,0 +1,161 @@
+/* @curve-ramp/tokens — ENTRY stylesheet (PLAN §3.3; D-8 boot contract).
+ *
+ * THE one stylesheet a consumer loads. The studio links exactly this file —
+ * and must do so BEFORE any customElements.define call, so the layer order
+ * below exists before any component adopts its constructable sheet into
+ * @layer components (D-8 boot contract; probed at M3.0).
+ *
+ * The @layer statement comes FIRST: it fixes cascade precedence for the whole
+ * app — later layers win, so component styles beat global, which beats the
+ * token layers, which beat the reset. Each imported file wraps its own rules
+ * in its named layer (raw.css → tokens.raw, semantic.css → tokens.semantic),
+ * so the imports below are deliberately NOT layer()-qualified — qualifying
+ * them would double-nest. properties.css holds @property registrations,
+ * which cascade layers don't affect.
+ */
+
+@layer reset, tokens.raw, tokens.semantic, global, components;
+
+@import url('./properties.css');
+@import url('./raw.css');
+@import url('./semantic.css');
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  img,
+  canvas,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ── Global — typography, surfaces, focus-visible policy ───────────────── */
+
+@layer global {
+  html {
+    block-size: 100%;
+  }
+
+  body {
+    min-block-size: 100%;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: system-ui, sans-serif;
+    font-size: var(--text-md);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    line-height: 1.25;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    line-height: 1.3;
+  }
+
+  small {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  code,
+  pre {
+    font-family: ui-monospace, monospace;
+    font-size: var(--text-sm);
+  }
+
+  /* Shared pill-button recipe (D-21 council #12) — THE one resting chrome for
+     chrome-tier buttons (legend channel switcher + mode toggle, canvas reset
+     cluster). Components are light-DOM, so they adopt it by CLASS in their
+     templates; their own css template (cascade layer `components`, which wins
+     over `global`) layers state styling — aria-pressed accents — on top.
+     One recipe, no duplicated literals (token gates T3/T4 unaffected: semantic
+     tokens only). */
+  .cr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    background: transparent;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-text-muted);
+    border-radius: var(--radius-4);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .cr-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  /* Manual theme override (R-22): <html data-theme="light"|"dark"> forces the
+     color-scheme; ABSENT = follow the system (semantic.css's `light dark`).
+     Every light-dark() pair in the semantic layer resolves from color-scheme,
+     so this one rule pair retargets the whole token tree. Set by <cr-app>'s
+     theme toggle (persisted in localStorage 'cr-theme' — ephemeral UI state,
+     never part of a PaletteSpec/share URL). */
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  /* Focus policy: visible ring for keyboard focus only, on every focusable.
+     No border-radius here (C4-#3): outlines follow the element's own radius
+     in Baseline engines — forcing --radius-1 globally snapped pill buttons
+     (--radius-4 .cr-btn) square under focus. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Curve Ramp</title>
+
+    <!-- D-8 BOOT CONTRACT (PLAN §2): the tokens entry stylesheet MUST load
+         before any module script runs, so its @layer statement fixes the
+         cascade order (reset → tokens.* → global → components) before any
+         customElements.define adopts a constructable sheet into
+         @layer components. Probed by apps/studio/e2e/smoke.spec.ts (M3.0).
+         Do not move or reorder this link. -->
+    <link rel="stylesheet" href="/color-tokens/packages/tokens/src/global.css" />
+
+    <!-- R-22 FOUC guard (C1-#3 / C2-F10): apply the STORED theme before the
+         module waterfall runs — <cr-app> applied it in connected(), several
+         network hops after first paint, so a dark-theme reload flashed the
+         system scheme. Placement is the contract: AFTER the tokens <link>
+         (the data-theme override rule must exist), BEFORE the import map.
+         try/catch because localStorage access can throw (privacy modes).
+         <cr-app> remains the only RUNTIME writer of the attribute. -->
+    <script>
+      try { var t = localStorage.getItem('cr-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t } catch (e) {}
+    </script>
+
+    <!-- D-17 / D-20c: no bundler — native ESM via import map, served by
+         scripts/serve.mjs from the repo root. The first two entries map the
+         workspace packages; the rest map the engine's SPEC-mandated runtime
+         deps (culori, apca-w3 → colorparsley), which dist/index.js imports
+         as bare specifiers. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@curve-ramp/curve-engine": "/color-tokens/packages/curve-engine/dist/index.js",
+          "@curve-ramp/base": "/color-tokens/packages/base/src/base.js",
+          "culori": "/color-tokens/node_modules/culori/src/index.js",
+          "apca-w3": "/color-tokens/node_modules/apca-w3/src/apca-w3.js",
+          "colorparsley": "/color-tokens/node_modules/colorparsley/src/colorparsley.js"
+        }
+      }
+    </script>
+
+    <script type="module" src="/color-tokens/apps/studio/src/main.js"></script>
+  </head>
+  <body>
+    <cr-app></cr-app>
+    <noscript>
+      Curve Ramp generates its palette in your browser — JavaScript is
+      required.
+    </noscript>
+  </body>
+</html>
